@@ -10,8 +10,46 @@ def main():
 	splitDataset = splitInClasses(fltrDtst)
 	binDataset = transformArrayToBinary(splitDataset)
 	attractors = generateAttractors(binDataset)
+	distances = distanceToAttractor(attractors,binDataset)
+	print(distances)
+	print(getP(4,1))
 	#showAttractors(attractors)
 	#print(attractors)
+
+def getP(n,rmax):
+	summatory = 0
+	for r in range(rmax+1):
+		nfact = factorial(n)
+		rfact = factorial(r)
+		summatory += (nfact/(factorial(n-r)*rfact))
+	return summatory
+
+
+def factorial(n):
+	if n <= 0:
+		return 1
+	else:
+		fact = n * factorial(n-1)
+		return fact
+
+def distanceToAttractor(attractors,dataset):
+	distance = {}
+	keys = list(attractors.keys())
+	for i in range(len(keys)):
+		key = keys[i]
+		if key not in distance:
+			distance[key] = {}
+		for row in range(len(dataset[key])):
+			for col in range(len(attractors[key])):
+				if col not in distance[key]:
+					distance[key][col] = {}
+				dist = hamDistance(dataset[key][row][col],attractors[key][col])
+				if dist not in distance[key][col]:
+					distance[key][col][dist] = []
+				distance[key][col][dist].append(row)
+	return distance
+			
+
 
 
 def generateAttractors(dataset):
@@ -27,12 +65,11 @@ def generateAttractors(dataset):
 				key2 = keys[j]
 				for row in dataset[key1]:
 					for row2 in dataset[key2]:
-						dist = euclDistance(row[col],row2[col])
+						dist = hamDistance(row[col],row2[col])
 						if maxDistance < dist:
 							maxDistance = dist
 							attractors[key1][col] = row[col]
 							attractors[key2][col] = row2[col]
-		print(maxDistance)
 	return attractors
 
 def showNumbers(dataset):
