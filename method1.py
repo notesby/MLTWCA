@@ -10,10 +10,10 @@ def main():
 
 	dataset = generateDataset(10,10)
 	dist = getDistanceMatrix(dataset)
-	print(dataset)
-	print(dist)
+	#print(dataset)
+	#print(dist)
 	sumatory = getSumatory(dist)
-	print(sumatory)
+	#print(sumatory)
 	if k == 1:
 		first = getFirstAttractor(sumatory)
 		return first
@@ -25,19 +25,34 @@ def main():
 		first = getFirstAttractor(sumatory)
 		second = getSecondAttractor(first,dist)
 		attractors = getOtherAttractors(first,second,k,dist)
-		print(attractors)
+		#print(attractors)
 		return attractors
+
+
+def getPartitions(attractors,dataset):
+	pass
+
 
 
 def getDistanceMatrix(dataset):
 	dist = np.zeros(shape=(len(dataset),len(dataset)))
 	for row in range(0,len(dataset)):
 		for pattern in range(row,len(dataset)):
-			count = 0
-			for x in range(0,len(dataset[pattern])):
-				if ( int(dataset[row][x]) ^ int(dataset[pattern][x])):
-					count += 1
-			dist[row][pattern] = count
+			dist[row][pattern] = getEuclDistance(dataset[row],dataset[pattern])
+	return dist
+
+def getHamDistance(p1,p2):
+	dist = 0
+	for i in range(len(p1)):
+		dist += p1[i] ^ p2[i]
+	return dist
+
+def getEuclDistance(p1,p2):
+	dist = 0
+	for i in range(len(p1)):
+		dist += pow(p1[i]-p2[i],2)
+	dist = pow(dist,1/2)
+	#print(p1,p2,dist)
 	return dist
 
 def getSumatory(dist):
